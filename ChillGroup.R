@@ -2,21 +2,84 @@ rm(list=ls())
 # 
 # Load the shinydashboard package
 library(tidyverse)
+library(dplyr)
 library(plotly)
 library(shinydashboard)
 library(shiny)
 
 #test maps
+library(leaflet)
 library(ggplot2)
 library(grid)
 library(rworldmap)
+
+
+### Data: 
+
+df <- read.csv2( "C:/Users/abdra/OneDrive/Documents/Projet/Hypermarché_Achats.csv",
+                 encoding = "UTF-8", 
+                 header = TRUE, 
+                 stringsAsFactors = FALSE
+)
+
+df <- df %>% 
+  mutate(Date_Commande = as.Date(df$Date.de.commande, format="%d/%m/%Y", tz="UTC"),
+         Date_Expedition = as.Date(df$Date.d.expédition, format="%d/%m/%Y", tz="UTC"))
+
+
+####### Computing : 
+
+##### Ventes N-1
+
+df %>%
+  mutate( year = format(Date_Commande, "%Y")) %>%
+  group_by(year) %>%
+  summarise(Ventes_year = sum( Ventes))
+
+##### Profit N-1
+df %>%
+  mutate( year = format(Date_Commande, "%Y")) %>%
+  group_by(year) %>%
+  summarise(Profit_year = sum(Profit))
+
+
+
+#####  Chiffre d'Affaires
+df %>%
+  
+  summarise(CA = sum(Quantité * Ventes))
+
+
+
+##### CA par Region 
+
+df %>%
+  group_by(Région) %>%
+  summarise(CA = sum(Quantité * Ventes))
+
+df %>%
+  group_by(Pays.Région) %>%
+  summarise(CA = sum(Quantité * Ventes))
+
+
+
+
+
+##### Profits par clients Categories: 
+
+
+df %>%
+  group_by(Segment) %>%
+  summarise(CA = sum(Profit))
+
 
 
 
 
 
 #####################################
-head <- dashboardHeader(title = "My Dashboard")
+head <- dashboardHeader(title = "My Dashboard"
+                        )
 
 
 ####################################
@@ -234,7 +297,7 @@ body <- dashboardBody( tags$head(tags$style(HTML('
            )
    ),
    
-   tabItem(tabName = "About",
+   tabItem(tabName = "About"
    
            #This part is about team members presentations and other information 
            #We can delete it, if the team think so
