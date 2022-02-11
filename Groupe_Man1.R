@@ -11,6 +11,7 @@ library(shiny)
 library(shinydashboard)
 library(dplyr)
 library(ggplot2)
+library(readr)
 
 data <- read_delim("~/Pr_Balti/Hypermarché_Achats.csv", 
                    delim = ";", escape_double = FALSE, trim_ws = TRUE)
@@ -242,7 +243,7 @@ shinyApp(
     ### Code pour le camembert
     
     output$Camen1 <- renderPlot({  pie(Camen$Profit2, Camen$Segment )
-      
+    })
       
       
       
@@ -271,6 +272,6 @@ shinyApp(
   })
   
     
-    })
+   
     
   })
